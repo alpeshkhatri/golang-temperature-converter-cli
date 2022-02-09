@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -22,11 +23,32 @@ func main() {
 	if len(os.Args) != 2 {
 		printError(errInvalidArguments)
 	}
-	originUnit := strings.ToUpper(os.Args[1])
+	originValue := strings.ToUpper(os.Args[1])
 	for {
 		fmt.Print("What is the current temperature in " + originUnit + " ? ")
+		_, err = fmt.Scanln(&originValue)
+		if err != nil {
+			printError(errReadingInput)
+
+		}
+		originValuefloat, err := strconv.ParseFloat(originValue, 64)
+		if err != nil {
+			printError(errReadingInput)
+
+		}
+		if originUnit == "C" {
+			convertToFahrenheit(originValuefloat)
+		} else {
+			convertToCelsius(originValuefloat)
+		}
 
 		fmt.Print("Would you like to convert another temperature ? (y/n) ")
+		_, err = fmt.Scanln(&shouldConvertAgain)
+		if err != nil {
+			printError(errReadingInput)
+		}
+		shouldConvertAgain = strings.TrimSpace(shouldConvertAgain)
+		shouldConvertAgain = strings.ToUpper(shouldConvertAgain)
 
 		if shouldConvertAgain != "Y" {
 			fmt.Println("Good bye!")
